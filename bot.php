@@ -9,8 +9,7 @@ Class Bot {
 		$this->limit = 6;
 		$this->snoopy = new \Snoopy;
 		$this->user = Config::$User;
-		$this->API = Config::$API;
-		$this->Subreddit = Config::$Subreddit;
+		$this->API = Config::$API;	
 	}
  
 	public function update() {
