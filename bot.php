@@ -8,16 +8,24 @@ Class Bot {
 		require 'lib/countries.php';
 		$this->limit = 6;
 		$this->snoopy = new \Snoopy;
-		$this->user = Config::$User;
+		$this->User = Config::$User;
 		$this->API = Config::$API;	
 	}
- 
+ 	public function run(){
+ 		$events = $this->update();
+ 		$sorted_events = $this->sort($events);
+ 		$parsed_events = $this->parse($sorted_events);
+ 		$formatted_events = $this->format($parsed_events);
+ 		$description = $this->prepare($formatted_events);
+ 		$this->post($description);
+ 		echo "Update complete. Complete description code generated: \n<pre>$description</pre>";
+ 	}
 	public function update() {
 		$data = file_get_contents($this->API['gg']);
 		$data = json_decode($data);
 		$events['gg'] = $data->matches;
 		$events = json_encode($events);
-		$this->sort(json_decode($events, true));
+		return json_decode($events, true);
 	}
  
 	public function login() {
@@ -48,7 +56,7 @@ Class Bot {
 				$matches = $events['gg'];
 			}
  
-			$this->parse($matches);
+			return $matches;
 		}
 	}
  
@@ -87,7 +95,7 @@ Class Bot {
 			} else break;
 		}
  
-		$this->format($ticker);
+		return $ticker;
 	}
  
 	public function format($ticker) {
@@ -100,7 +108,7 @@ Class Bot {
  
 			$tock .= "\n[".$tick['teams']."](/hidden)\n\n";
 		}
-		$this->prepare($tock);
+		return $tock;
 	}
  
 	public function prepare($text) {
@@ -111,16 +119,13 @@ Class Bot {
 		$description = str_replace("&gt;", ">", $description);
 		$description = str_replace('%%STATUS%%', '', $description);
 		$description = str_replace("%%EVENTS%%", $text, $description);
-		$this->dump($description);
-		$this->post($description);
+		return $description;
 	}
  
 	protected function post($description) {
 		$this->snoopy->fetch('http://reddit.com/r/vodsbeta/about/edit/.json');
-		$this->dump($this->snoopy->results);
 		$about = json_decode($this->snoopy->results);
 		$data = $about->data;
- 
 		$parameters['sr'] = 't5_2xu9u';
 		$parameters['title'] = $data->title;
 		$parameters['public_description'] = $data->public_description;
@@ -145,7 +150,6 @@ Class Bot {
 		$parameters['uh'] = $this->uh;
  
 		$this->snoopy->submit("http://www.reddit.com/api/site_admin?api_type=json", $parameters);
-		$this->dump($this->snoopy->results);
 	}
  
 	protected function gosugamers() {
@@ -161,7 +165,7 @@ Class Bot {
 	        $cacheTime = trim(fgets($fh));
 	        // if data was cached recently, return cached data
 	        if ($cacheTime > strtotime('-15 minutes')) {
-	            return = fread($fh,filesize($cacheFile));
+	            return fread($fh,filesize($cacheFile));
 	        }
 	        // else delete cache file
 	        fclose($fh);
@@ -170,13 +174,9 @@ Class Bot {
 	    $short = $googl->shorten($url);
 	    $fh = fopen($cacheFile, 'w');
 	    fwrite($fh, time() . "\n");
-	    fwrite($fh, $json);
+	    fwrite($fh, $short);
 	    fclose($fh);
         return $short;
-	}
- 
-	private function dump($str) {
-		echo "<code>$str</code>";
 	}
 }
 ?>
