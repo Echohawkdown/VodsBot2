@@ -8,6 +8,9 @@ Class Bot {
 		require 'lib/countries.php';
 		$this->limit = 6;
 		$this->snoopy = new \Snoopy;
+		$this->user = Config::$User;
+		$this->API = Config::$API;
+		$this->Subreddit = Config::$Subreddit;
 	}
  
 	public function update() {
@@ -15,33 +18,15 @@ Class Bot {
 	}
  
 	public function login() {
-		// if ($this->cache->get('uh') && $this->cache->get('cookie')) $this->snoopy->cookies['reddit_session'] = $this->cache->get('cookie');
-		// else {
 			$this->snoopy->submit("http://reddit.com/api/login/".$this->User['user'], $this->User);
- 
 			$login = json_decode($this->snoopy->results);
-			// var_dump($login);
 			$this->snoopy->cookies['reddit_session'] = $login->json->data->cookie;
- 
-			// $this->cache->set('uh', $login->json->data->modhash);
-			// $this->cache->set('cookie', $login->json->data->cookie);
-			// $this->cache->expire('uh', 300);
-			// $this->cache->expire('cookie', 300);
 			$this->uh = $login->json->data->modhash;
-		// }
 	}
  
 	public function events() {
-		//if (is_null($this->cache->get('events')))  {
-			// $events['jd'] = $this->joinDOTA();
-			$events['gg'] = $this->gosugamers();
- 
-			$events = json_encode($events);
- 
-			// $this->cache->set('events', $events);
-			// $this->cache->expire('events', 60);
-		//} else $events = $this->cache->get('events');
- 
+		$events['gg'] = $this->gosugamers();
+		$events = json_encode($events);
 		$this->sort(json_decode($events, true));
 	}
  
@@ -96,8 +81,7 @@ Class Bot {
 				else if (isset($match['tournament']['name'])) $ticker[$i]['tournament'] = $match['tournament']['name'];
  
 				// Teams
-				if (isset($match['team_1_name']) && isset($match['team_2_name']))  $ticker[$i]['teams'] = $match['team_1_name'].' vs '.$match['team_2_name'];
-			else if (isset($match['firstOpponent']['name']) && isset($match['secondOpponent']['name']))  $ticker[$i]['teams'] = $match['firstOpponent']['name'].' vs '.$match['secondOpponent']['name'];
+				if (isset($match['firstOpponent']['name']) && isset($match['secondOpponent']['name']))  $ticker[$i]['teams'] = $match['firstOpponent']['name'].' vs '.$match['secondOpponent']['name'];
  
 				// URLs
 				if (isset($match['pageUrl'])) $ticker[$i]['url']['gg'] = $match['pageUrl'];
@@ -125,8 +109,6 @@ Class Bot {
  
 	public function prepare($text) {
 		$this->login();
- 
-		//$json = json_decode(file_get_contents('http://www.reddit.com/r/vodsbeta/wiki/sidebar.json'));
 		$this->snoopy->fetch('http://www.reddit.com/r/vodsbeta/wiki/sidebar.json');
 		$description = json_decode($this->snoopy->results);
 		$description = $description->data->content_md;
@@ -134,7 +116,6 @@ Class Bot {
 		$description = str_replace('%%STATUS%%', '', $description);
 		$description = str_replace("%%EVENTS%%", $text, $description);
 		$this->dump($description);
- 
 		$this->post($description);
 	}
  
@@ -165,7 +146,6 @@ Class Bot {
 		$parameters['spam_selfposts'] = 'low';
 		$parameters['link_type'] = 'any';
 		$parameters['description'] = $description;
-		// $parameters['uh'] = $this->cache->get('uh');
 		$parameters['uh'] = $this->uh;
  
 		$this->snoopy->submit("http://www.reddit.com/api/site_admin?api_type=json", $parameters);
@@ -177,10 +157,26 @@ Class Bot {
 		$data = json_decode($data);
 		return $data->matches;
 	}
- 
-	private function shortenUrl($url) {
-		$googl = new \Googl($this->googleAPI);
-		return $googl->shorten($url);
+	private function shortenUrl($url){
+		$googl = new \Googl($this->API['googl']);
+	    $cacheFile = 'cache' . DIRECTORY_SEPARATOR . md5($url);
+	    if (file_exists($cacheFile)) {
+	        $fh = fopen($cacheFile, 'r');
+	        $cacheTime = trim(fgets($fh));
+	        // if data was cached recently, return cached data
+	        if ($cacheTime > strtotime('-15 minutes')) {
+	            return = fread($fh,filesize($cacheFile));
+	        }
+	        // else delete cache file
+	        fclose($fh);
+	        unlink($cacheFile);
+	    }
+	    $short = $googl->shorten($url);
+	    $fh = fopen($cacheFile, 'w');
+	    fwrite($fh, time() . "\n");
+	    fwrite($fh, $json);
+	    fclose($fh);
+        return $short;
 	}
  
 	private function dump($str) {
