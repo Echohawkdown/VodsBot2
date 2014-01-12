@@ -14,7 +14,11 @@ Class Bot {
 	}
  
 	public function update() {
-		$events = $this->events();
+		$data = file_get_contents($this->API['gg']);
+		$data = json_decode($data);
+		$events['gg'] = $data->matches;
+		$events = json_encode($events);
+		$this->sort(json_decode($events, true));
 	}
  
 	public function login() {
@@ -23,13 +27,6 @@ Class Bot {
 			$this->snoopy->cookies['reddit_session'] = $login->json->data->cookie;
 			$this->uh = $login->json->data->modhash;
 	}
- 
-	public function events() {
-		$events['gg'] = $this->gosugamers();
-		$events = json_encode($events);
-		$this->sort(json_decode($events, true));
-	}
- 
 	public function sort($events = NULL) {
 		if (!is_null($events)) {
 			foreach ($events['gg'] as $key => $value) $events['gg'][$key]['match_time'] = strtotime($value['datetime']);
