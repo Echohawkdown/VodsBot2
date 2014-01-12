@@ -89,7 +89,8 @@ Class Bot {
  
 				// URLs
 				if (isset($match['pageUrl'])) $ticker[$i]['url']['gg'] = $match['pageUrl'];
-				if (isset($match['coverage_url'])) $ticker[$i]['url']['jd'] = $match['coverage_url'];
+				//if (isset($match['coverage_url'])) $ticker[$i]['url']['jd'] = $match['coverage_url'];
+				if(strpos($ticker[$i]['url']['gg'], "playoff") !== false) $ticker[$i]['spoiler'] = true;
  
 				$i++;
 			} else break;
@@ -105,8 +106,8 @@ Class Bot {
 			// $url = $tick['url']['gg'];
 			if ($tick['time'] == 'live') $tock .= "#\n [**LIVE - " . $tick['tournament'] . '**]('.$url.' "'.date('M d H:m T', $tick['timestamp']).'")  ';
 			else $tock .= "#\n [".$tick['time'].' - ' . $tick['tournament'] . ']('.$url.' "'.date('M d H:m T', $tick['timestamp']).'")  ';
- 
-			$tock .= "\n[".$tick['teams']."](/hidden)\n\n";
+ 			if($tick['spoiler'] == true)	$tock .= "\n[".$tick['teams']."](/hidden)\n\n";
+			else $tock .= "\n".$tick['teams']."\n\n";
 		}
 		return $tock;
 	}
