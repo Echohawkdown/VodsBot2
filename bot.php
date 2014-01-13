@@ -85,13 +85,13 @@ Class Bot {
 				else if (isset($match['tournament']['name'])) $ticker[$i]['tournament'] = $match['tournament']['name'];
  
 				// Teams
-				if (isset($match['firstOpponent']['name']) && isset($match['secondOpponent']['name']))  $ticker[$i]['teams'] = $match['firstOpponent']['name'].' vs '.$match['secondOpponent']['name'];
+				if (isset($match['firstOpponent']['name']) && isset($match['secondOpponent']['name']))  $ticker[$i]['teams'] = '**'.$match['firstOpponent']['name'].'** vs **'.$match['secondOpponent']['name'].'**';
  
 				// URLs
 				if (isset($match['pageUrl'])) $ticker[$i]['url']['gg'] = $match['pageUrl'];
 				//if (isset($match['coverage_url'])) $ticker[$i]['url']['jd'] = $match['coverage_url'];
 				if(strpos($ticker[$i]['url']['gg'], "playoff") !== false) $ticker[$i]['spoiler'] = true;
- 
+ 				else $ticker[$i]['spoiler'] = false;
 				$i++;
 			} else break;
 		}
@@ -105,7 +105,7 @@ Class Bot {
 			$url = $this->shortenUrl($tick['url']['gg']);
 			// $url = $tick['url']['gg'];
 			if ($tick['time'] == 'live') $tock .= "#\n [**LIVE - " . $tick['tournament'] . '**]('.$url.' "'.date('M d H:m T', $tick['timestamp']).'")  ';
-			else $tock .= "#\n [".$tick['time'].' - ' . $tick['tournament'] . ']('.$url.' "'.date('M d H:m T', $tick['timestamp']).'")  ';
+			else $tock .= "#\n [**".$tick['time'].'** - ' . $tick['tournament'] . ']('.$url.' "'.date('M d H:m T', $tick['timestamp']).'")  ';
  			if($tick['spoiler'] == true)	$tock .= "\n[".$tick['teams']."](/hidden)\n\n";
 			else $tock .= "\n".$tick['teams']."\n\n";
 		}
@@ -177,7 +177,7 @@ Class Bot {
 	    fwrite($fh, time() . "\n");
 	    fwrite($fh, $short);
 	    fclose($fh);
-        return $short;
+	    return $short;
 	}
 }
 ?>
