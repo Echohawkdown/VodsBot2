@@ -149,7 +149,7 @@ Class Bot {
 		$parameters['link_type'] = 'any';
 		$parameters['description'] = $description;
 		$parameters['uh'] = $this->uh;
- 
+ 		$parameters['show_media'] = $data->show_media;
 		$this->snoopy->submit("http://www.reddit.com/api/site_admin?api_type=json", $parameters);
 	}
  
