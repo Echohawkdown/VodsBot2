@@ -85,7 +85,7 @@ Class Bot {
 				else if (isset($match['tournament']['name'])) $ticker[$i]['tournament'] = $match['tournament']['name'];
  
 				// Teams
-				if (isset($match['firstOpponent']['name']) && isset($match['secondOpponent']['name']))  $ticker[$i]['teams'] = '**'.$match['firstOpponent']['name'].'** vs **'.$match['secondOpponent']['name'].'**';
+				if (isset($match['firstOpponent']['shortName']) && isset($match['secondOpponent']['shortName']))  $ticker[$i]['teams'] = '**'.$match['firstOpponent']['shortName'].'** vs **'.$match['secondOpponent']['shortName'].'**';
  
 				// URLs
 				if (isset($match['pageUrl'])) $ticker[$i]['url']['gg'] = $match['pageUrl'];
