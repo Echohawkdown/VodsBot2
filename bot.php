@@ -85,7 +85,7 @@ Class Bot {
 				else if (isset($match['tournament']['name'])) $ticker[$i]['tournament'] = $match['tournament']['name'];
 				$removes = array("-LoL",".LoL")
  				$match['firstOpponent']['shortName'] = str_replace($removes, "", $match['firstOpponent']['shortName']);
- 				$match['secondOpponent']['shortName'] = str_replace($removes, "", $match['secondOpponent']['shortName']
+ 				$match['secondOpponent']['shortName'] = str_replace($removes, "", $match['secondOpponent']['shortName']);
 				// Teams
 				if (isset($match['firstOpponent']['shortName']) && isset($match['secondOpponent']['shortName']))  $ticker[$i]['teams'] = '**'.$match['firstOpponent']['shortName'].'** vs **'.$match['secondOpponent']['shortName'].'**';
  
