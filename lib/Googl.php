@@ -55,6 +55,7 @@ class Googl
 		# Set cURL options
 		curl_setopt($this->ch, CURLOPT_POST, count($data));
 		curl_setopt($this->ch, CURLOPT_POSTFIELDS, $data_string);
+		curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($this->ch, CURLOPT_HTTPHEADER, Array('Content-Type: application/json'));
 
 		if ( $extended || $this->extended) {
