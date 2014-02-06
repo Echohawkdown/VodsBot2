@@ -91,6 +91,10 @@ Class Bot {
 				if (isset($match['pageUrl'])) $ticker[$i]['url']['gg'] = $match['pageUrl'];
 				//if (isset($match['coverage_url'])) $ticker[$i]['url']['jd'] = $match['coverage_url'];
 				if(strpos($ticker[$i]['url']['gg'], "playoff") !== false) $ticker[$i]['spoiler'] = true;
+				else if (strpos($ticker[$i]['url']['gg'], "top") !== false) $ticker[$i]['spoiler'] = true;
+				else if (strpos($ticker[$i]['url']['gg'], "Ro8") !== false) $ticker[$i]['spoiler'] = true;
+				else if (strpos($ticker[$i]['url']['gg'], "final") !== false) $ticker[$i]['spoiler'] = true;
+				else if (strpos($ticker[$i]['url']['gg'], "Final") !== false) $ticker[$i]['spoiler'] = true;
  				else $ticker[$i]['spoiler'] = false;
 				$i++;
 			} else break;
