@@ -114,7 +114,7 @@ Class Bot {
  
 	public function prepare($text) {
 		$this->login();
-		$this->snoopy->fetch('http://www.reddit.com/r/vodsbeta/wiki/sidebar.json');
+		$this->snoopy->fetch('http://www.reddit.com/r/loleventvods/wiki/sidebar.json');
 		$description = json_decode($this->snoopy->results);
 		$description = $description->data->content_md;
 		$description = str_replace("&gt;", ">", $description);
@@ -124,32 +124,31 @@ Class Bot {
 	}
  
 	protected function post($description) {
-		$this->snoopy->fetch('http://reddit.com/r/vodsbeta/about/edit/.json');
+		$this->snoopy->fetch('http://reddit.com/r/loleventvods/about/edit/.json');
 		$about = json_decode($this->snoopy->results);
 		$data = $about->data;
-		$parameters['sr'] = 't5_2xu9u';
+		$parameters['sr'] = 't5_2ux5s';
 		$parameters['title'] = $data->title;
 		$parameters['public_description'] = $data->public_description;
 		$parameters['lang'] = $data->language;
 		$parameters['type'] = $data->subreddit_type;
-		$parameters['link_type'] = $data->content_options;
+		$parameters['link_type'] = 'self';
 		$parameters['wikimode'] = $data->wikimode;
 		$parameters['wiki_edit_karma'] = $data->wiki_edit_karma;
 		$parameters['wiki_edit_age'] = $data->wiki_edit_age;
 		$parameters['allow_top'] = 'on';
 		$parameters['header-title'] = '';
 		$parameters['id'] = '#sr-form';
-		$parameters['r'] = 'vodsbeta';
+		$parameters['r'] = 'loleventvods';
 		$parameters['renderstyle'] = 'html';
 		$parameters['comment_score_hide_mins'] = $data->comment_score_hide_mins;
 		$parameters['public_traffic'] = 'on';
 		$parameters['spam_comments'] = 'low';
 		$parameters['spam_links'] = 'low';
 		$parameters['spam_selfposts'] = 'low';
-		$parameters['link_type'] = 'any';
 		$parameters['description'] = $description;
 		$parameters['uh'] = $this->uh;
- 		$parameters['show_media'] = $data->show_media;
+ 		$parameters['show_media'] = 'on';
 		$this->snoopy->submit("http://www.reddit.com/api/site_admin?api_type=json", $parameters);
 	}
  
@@ -160,23 +159,7 @@ Class Bot {
 	}
 	private function shortenUrl($url){
 		$googl = new \Googl($this->API['googl']);
-	    $cacheFile = 'cache' . DIRECTORY_SEPARATOR . md5($url);
-	    if (file_exists($cacheFile)) {
-	        $fh = fopen($cacheFile, 'r');
-	        $cacheTime = trim(fgets($fh));
-	        // if data was cached recently, return cached data
-	        if ($cacheTime > strtotime('-15 minutes')) {
-	            return fread($fh,filesize($cacheFile));
-	        }
-	        // else delete cache file
-	        fclose($fh);
-	        unlink($cacheFile);
-	    }
 	    $short = $googl->shorten($url);
-	    $fh = fopen($cacheFile, 'w');
-	    fwrite($fh, time() . "\n");
-	    fwrite($fh, $short);
-	    fclose($fh);
 	    return $short;
 	}
 }
