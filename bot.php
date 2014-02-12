@@ -137,7 +137,7 @@ Class Bot {
 		$parameters['title'] = $data->title;
 		$parameters['public_description'] = $data->public_description;
 		$parameters['lang'] = $data->language;
-		$parameters['type'] = $data->subreddit_type;
+		$parameters['type'] = 'private';
 		$parameters['link_type'] = 'self';
 		$parameters['wikimode'] = $data->wikimode;
 		$parameters['wiki_edit_karma'] = $data->wiki_edit_karma;
@@ -155,6 +155,7 @@ Class Bot {
 		$parameters['description'] = $description;
 		$parameters['uh'] = $this->uh;
  		$parameters['show_media'] = 'on';
+
 		$this->snoopy->submit("http://www.reddit.com/api/site_admin?api_type=json", $parameters);
 	}
  
