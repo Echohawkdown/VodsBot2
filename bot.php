@@ -137,7 +137,7 @@ Class Bot {
 		$parameters['title'] = $data->title;
 		$parameters['public_description'] = $data->public_description;
 		$parameters['lang'] = $data->language;
-		$parameters['type'] = 'private';
+		$parameters['type'] = 'restricted';
 		$parameters['link_type'] = 'self';
 		$parameters['wikimode'] = $data->wikimode;
 		$parameters['wiki_edit_karma'] = $data->wiki_edit_karma;
